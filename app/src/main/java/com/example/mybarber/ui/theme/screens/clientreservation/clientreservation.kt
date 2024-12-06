@@ -1,5 +1,8 @@
 package com.example.mybarber.ui.theme.screens.clientreservation
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,6 +28,7 @@ import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
@@ -33,6 +37,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,17 +46,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.mybarber.data.AuthViewModel
+import com.example.mybarber.data.ReservationViewModel
+import androidx.compose.runtime.collectAsState
+//import androidx.compose.runtime.livedata.observeAsState
 
 @Composable
 fun ClientReservationScreen(navController: NavController) {
+
+    val authViewModel: AuthViewModel = viewModel()
+    val isLoading by authViewModel.isLoading.collectAsState()
+    val context = LocalContext.current
     var firstname by remember {
         mutableStateOf(value = "")
     }
@@ -62,6 +77,9 @@ fun ClientReservationScreen(navController: NavController) {
         mutableStateOf(value = "")
     }
     var date by remember {
+        mutableStateOf(value = "")
+    }
+    var id by remember {
         mutableStateOf(value = "")
     }
     Scaffold (
@@ -139,18 +157,35 @@ fun ClientReservationScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(10.dp))
             Button(
                 onClick = {
+                    val clientRepository = ReservationViewModel()
+                    clientRepository.saveReservation(
+                        firstname = firstname,
+                        lastname = lastname,
+                        time = time,
+                        date = date,
+                        id = id,
+                        navController = navController,
+                        context   = context
+                    )
 
 
                 },
-
+                enabled = !isLoading,
                 colors = ButtonDefaults.buttonColors(Color.Black)
             ) {
+                if (isLoading){
+                    CircularProgressIndicator(color = Color.Black, strokeWidth = 4.dp)
 
-                Text(
-                    modifier = Modifier.padding(10.dp),
-                    color = Color.White,
-                    text = "BOOK SESSION"
-                )
+                }else{
+                    Text(
+                        modifier = Modifier.padding(10.dp),
+                        color = Color.White,
+                        text = "BOOK SESSION"
+                    )
+
+                }
+
+
 
 
 

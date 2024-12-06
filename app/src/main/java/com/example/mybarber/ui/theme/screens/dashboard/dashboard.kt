@@ -39,6 +39,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mybarber.R
 import com.example.mybarber.navigation.ROUTE_CLIENT_RESERVATION
+import com.example.mybarber.navigation.ROUTE_VIEW_RESERVATIONS
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,6 +87,7 @@ fun Dashboard(navController: NavController){
             Card (modifier = Modifier
                 .padding(10.dp)
                 .clickable {
+                    navController.navigate(ROUTE_VIEW_RESERVATIONS)
 
                 },
                 shape = RoundedCornerShape(20.dp),
